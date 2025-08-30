@@ -16,12 +16,15 @@ cloudinary.v2.config({
 
 
 // ✅ PUT - update product
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(
+  req: Request,
+  context: { params: { id: string } } // ✅ correct type
+) {
   await connectDB();
 
-  const formData = await req.formData();
-  const id = params.id;  // ✅ yahan se ID aayegi (URL se)
+  const { id } = context.params; // get id from context
 
+  const formData = await req.formData();
   const name = formData.get("name") as string;
   const price = formData.get("price") as string;
   const description = formData.get("description") as string;
@@ -32,12 +35,13 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     return NextResponse.json({ error: "Product ID is required" }, { status: 400 });
   }
 
-  let imageUrl = undefined;
+  let imageUrl: string | undefined = undefined;
+
   if (image) {
     const bytes = await image.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const upload = await new Promise<unknown>((resolve, reject) => {
+    const upload = await new Promise<any>((resolve, reject) => {
       cloudinary.v2.uploader
         .upload_stream({}, (err, result) => {
           if (err) reject(err);
