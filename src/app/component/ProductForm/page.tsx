@@ -4,7 +4,7 @@ import axios from "axios";
 import Image from "next/image";
 
 interface ProductFormProps {
-  editingProduct?: any;
+  editingProduct?: unknown;
   onSuccess: () => void;
 }
 
@@ -19,7 +19,7 @@ export default function ProductForm({ editingProduct, onSuccess }: ProductFormPr
     image: editingProduct?.image || "",
   });
 
-  const [uploading, setUploading] = useState(false);
+  const [uploading] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false); // ✅ state for popup
 
   const handleChange = (
@@ -60,10 +60,12 @@ export default function ProductForm({ editingProduct, onSuccess }: ProductFormPr
       onSuccess();
       setForm({ name: "", price: "", description: "", category: "", image: "" });
       setShowConfirm(false); // close popup
-    } catch (err: any) {
+    } catch (err: unknown) {
+      if (err instanceof Error) {
       console.error("Product save error:", err.response?.data || err.message);
       alert(err.response?.data?.message || "Something went wrong!");
     }
+  }
   };
 
   return (

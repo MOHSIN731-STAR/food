@@ -17,10 +17,13 @@ export async function GET(req: Request) {
       .select("name price description image category");
 
     return NextResponse.json(products);
-  } catch (error) {
+  } catch (err:unknown) {
+    if (err instanceof Error) {
     return NextResponse.json(
-      { error: "Failed to fetch products" },
+      { err: "Failed to fetch products" },
       { status: 500 }
+    
     );
   }
+}
 }

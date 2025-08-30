@@ -64,7 +64,7 @@ const Menu: React.FC = () => {
     setSelectedMenu(item.label);
   };
 
-  const handleAddToCart = (product: any) => {
+  const handleAddToCart = (product: unknown) => {
     dispatch(addToCart({
       id: product._id || product.id,
       title: product.title,

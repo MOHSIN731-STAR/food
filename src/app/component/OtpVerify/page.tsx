@@ -5,7 +5,7 @@ import { AppDispatch, RootState } from "../../redux/store/store";
 import { verifyOtp } from "../../redux/store/verifyOtpSlice";
 
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+// import Link from "next/link";
 const OtpVerify: React.FC = () => {
   const [otp, setOtp] = useState("");
   const [timeLeft, setTimeLeft] = useState(60);

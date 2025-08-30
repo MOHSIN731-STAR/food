@@ -37,7 +37,7 @@ export const registerUser = createAsyncThunk(
     try {
       const res = await api.post("/auth/register", { name, email, password, role });
       return res.data; // { user, token }
-    } catch (err: any) {
+    } catch (err: unknown) {
       return rejectWithValue(err.response?.data?.error || "Registration failed");
     }
   }
@@ -58,7 +58,7 @@ export const loginUser = createAsyncThunk(
       setTimeout(() => dispatch(loadUserCart()), 0);
 
       return res.data; // { user, token }
-    } catch (err: any) {
+    } catch (err: unknown) {
       return rejectWithValue(err.response?.data?.error || "Login failed");
     }
   }

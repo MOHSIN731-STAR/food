@@ -11,10 +11,14 @@ const JWT_SECRET = process.env.JWT_SECRET || "your_default_secret";
 function verifyToken(token: string) {
   try {
     return jwt.verify(token, JWT_SECRET) as { id: string; email: string; role: string };
-  } catch (err) {
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error("JWT verification error:", err.message);
+    }
     return null;
   }
 }
+
 
 export async function POST(req: Request) {
   try {

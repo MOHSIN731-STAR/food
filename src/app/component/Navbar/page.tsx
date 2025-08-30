@@ -29,7 +29,8 @@ const Navbar: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   // 🔑 auth slice -> login ke baad
-  const { user: authUser, loading, error } = useSelector(
+  
+  const {  loading, error } = useSelector(
     (state: RootState) => state.auth
   );
 

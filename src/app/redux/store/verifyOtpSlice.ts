@@ -8,6 +8,12 @@ interface User {
   role: string;
 }
 
+interface VerifyOtpResponse {
+  message: string;
+  token: string;
+  user: User;
+}
+
 interface VerifyOtpState {
   user: User | null;
   token: string | null;
@@ -23,9 +29,13 @@ const initialState: VerifyOtpState = {
 };
 
 // 🔥 Verify OTP API Call
-export const verifyOtp = createAsyncThunk(
+export const verifyOtp = createAsyncThunk<
+  VerifyOtpResponse, // ✅ Returned data type
+  string,            // ✅ Argument type (otp string)
+  { rejectValue: string } // ✅ Reject value type
+>(
   "verifyOtp/verifyOtp",
-  async (otp: string, { rejectWithValue }) => {
+  async (otp, { rejectWithValue }) => {
     try {
       const res = await fetch("/api/verify-otp", {
         method: "POST",
@@ -36,9 +46,12 @@ export const verifyOtp = createAsyncThunk(
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "OTP verification failed");
 
-      return data; // { message, token, user }
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+      return data as VerifyOtpResponse; // ✅ Type assertion
+    } catch (error) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue("Unknown error");
     }
   }
 );
@@ -51,7 +64,7 @@ const verifyOtpSlice = createSlice({
       const savedUser = localStorage.getItem("user");
       const savedToken = localStorage.getItem("token");
       if (savedUser && savedToken) {
-        state.user = JSON.parse(savedUser);
+        state.user = JSON.parse(savedUser) as User;
         state.token = savedToken;
       }
     },
@@ -71,19 +84,25 @@ const verifyOtpSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(verifyOtp.fulfilled, (state, action: PayloadAction<any>) => {
-        state.loading = false;
-        state.user = action.payload.user;
-        state.token = action.payload.token;
+      .addCase(
+        verifyOtp.fulfilled,
+        (state, action: PayloadAction<VerifyOtpResponse>) => {
+          state.loading = false;
+          state.user = action.payload.user;
+          state.token = action.payload.token;
 
-        // ✅ Save separately in localStorage
-        localStorage.setItem("user", JSON.stringify(action.payload.user));
-        localStorage.setItem("token", action.payload.token);
-      })
-      .addCase(verifyOtp.rejected, (state, action: PayloadAction<any>) => {
-        state.loading = false;
-        state.error = action.payload;
-      });
+          // ✅ Save separately in localStorage
+          localStorage.setItem("user", JSON.stringify(action.payload.user));
+          localStorage.setItem("token", action.payload.token);
+        }
+      )
+      .addCase(
+        verifyOtp.rejected,
+        (state, action: PayloadAction<string | undefined>) => {
+          state.loading = false;
+          state.error = action.payload ?? "OTP verification failed";
+        }
+      );
   },
 });
 

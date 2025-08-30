@@ -1,4 +1,4 @@
-// lib/admin.ts
+// src/app/lib/admin.ts
 import jwt, { JwtPayload } from "jsonwebtoken";
 
 interface DecodedToken extends JwtPayload {
@@ -7,7 +7,7 @@ interface DecodedToken extends JwtPayload {
   email?: string;
 }
 
-export function isAdminOrSubAdmin(token: string | null) {
+export function isAdminOrSubAdmin(token: string | null): DecodedToken | null {
   if (!token) return null;
 
   try {
@@ -20,7 +20,7 @@ export function isAdminOrSubAdmin(token: string | null) {
       return decoded;
     }
     return null; // not admin
-  } catch (err) {
+  } catch {
     return null; // invalid token
   }
 }

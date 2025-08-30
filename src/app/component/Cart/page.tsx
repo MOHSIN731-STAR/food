@@ -107,7 +107,7 @@ const Cart: React.FC = () => {
               type={field === "email" ? "email" : "text"}
               name={field}
               placeholder={`Enter your ${field}`}
-              value={(formData as any)[field]}
+              value={(formData as unknown as Record<string, string>)[field]}
               onChange={handleChange}
               className="w-full border p-2 rounded focus:border-blue-500 focus:ring-2 focus:ring-blue-300 outline-none transition"
             />

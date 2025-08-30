@@ -4,7 +4,7 @@ import ProductForm from "./../ProductForm/page";
 import ProductList from "./../ProductList/page";
 
 export default function AdminPanel() {
-  const [editingProduct, setEditingProduct] = useState<any>(null);
+  const [editingProduct, setEditingProduct] = useState<unknown>(null);
 
   const handleSuccess = () => {
     setEditingProduct(null);

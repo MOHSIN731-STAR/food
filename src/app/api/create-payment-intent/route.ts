@@ -2,25 +2,41 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: "2024-06-20", // use latest Stripe API version
+  apiVersion: "2024-06-20", // latest Stripe API version
 });
+
+// Define the shape of cart items
+interface CartItem {
+  id: string;
+  title: string;
+  image?: string;
+  price: number;
+  quantity: number;
+}
+
+// Define the request body
+interface RequestBody {
+  items: CartItem[];
+  customer: {
+    email: string;
+  };
+}
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-
+    const body: RequestBody = await req.json();
     const { items, customer } = body;
 
-    // Example: calculate total (you should improve this in real app)
-    const amount = items.reduce(
-      (total: number, item: any) => total + item.price * item.quantity,
-      0
-    );
+    // Optional: calculate total (if you want to double-check the amount)
+    // const amount = items.reduce(
+    //   (total, item) => total + item.price * item.quantity,
+    //   0
+    // );
 
     // Create Checkout Session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
-      line_items: items.map((item: any) => ({
+      line_items: items.map((item) => ({
         price_data: {
           currency: "usd",
           unit_amount: Math.round(item.price * 100), // in cents
@@ -38,8 +54,13 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ id: session.id });
-  } catch (err: any) {
-    console.error("Stripe error:", err.message);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error("Stripe error:", err.message);
+      return NextResponse.json({ error: err.message }, { status: 500 });
+    }
+
+    // Fallback for unexpected non-Error cases
+    return NextResponse.json({ error: "Unknown error occurred" }, { status: 500 });
   }
 }
