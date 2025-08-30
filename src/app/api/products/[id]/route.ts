@@ -4,27 +4,24 @@ import Product from "../../../models/Proudct";
 import cloudinary from "cloudinary";
 
 export const config = {
-  api: { bodyParser: false }, // ❌ disable default parser
+  api: { bodyParser: false },
 };
 
-// ✅ Cloudinary config
+// Cloudinary config
 cloudinary.v2.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
   api_key: process.env.CLOUDINARY_API_KEY!,
   api_secret: process.env.CLOUDINARY_API_SECRET!,
 });
 
-
 // ✅ PUT - update product
-export async function PATCH(
+export async function PUT(
   req: Request,
-  context: { params: Record<string, string | string[]> }
+  { params }: { params: { id: string } } // <-- Fix type here
 ) {
   await connectDB();
 
-  const id = Array.isArray(context.params.id)
-    ? context.params.id[0]
-    : context.params.id;
+  const id = params.id;
 
   const formData = await req.formData();
   const name = formData.get("name") as string;
@@ -70,13 +67,15 @@ export async function PATCH(
   return NextResponse.json(updatedProduct);
 }
 
-
 // ✅ DELETE - remove product
-export async function DELETE(req: Request, context: unknown) {
+export async function DELETE(
+  req: Request,
+  { params }: { params: { id: string } } // <-- Same fix
+) {
   try {
     await connectDB();
 
-    const { id } = context.params; // extract id from context.params
+    const id = params.id;
 
     const deletedProduct = await Product.findByIdAndDelete(id);
 
@@ -92,4 +91,3 @@ export async function DELETE(req: Request, context: unknown) {
     return NextResponse.json({ error: "Unknown error" }, { status: 500 });
   }
 }
-
