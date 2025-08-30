@@ -16,7 +16,7 @@ cloudinary.v2.config({
 
 
 // ✅ PUT - update product
-export async function PATCH(
+export async function PUT(
   req: Request,
   context: { params: Record<string, string | string[]> }
 ) {
