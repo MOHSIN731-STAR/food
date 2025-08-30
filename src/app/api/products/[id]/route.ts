@@ -69,23 +69,19 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 }
 
 // ✅ DELETE - remove product
-export async function DELETE(
-  req: Request,
-  context: { params: { id: string } } // must be called `context`
-) {
+export async function DELETE(req: Request, context: unknown) {
   try {
     await connectDB();
 
-    const deletedProduct = await Product.findByIdAndDelete(context.params.id);
+    const { id } = context.params; // extract id from context.params
+
+    const deletedProduct = await Product.findByIdAndDelete(id);
 
     if (!deletedProduct) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
-    return NextResponse.json(
-      { message: "Product deleted successfully" },
-      { status: 200 }
-    );
+    return NextResponse.json({ message: "Product deleted successfully" }, { status: 200 });
   } catch (error: unknown) {
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -93,3 +89,4 @@ export async function DELETE(
     return NextResponse.json({ error: "Unknown error" }, { status: 500 });
   }
 }
+
