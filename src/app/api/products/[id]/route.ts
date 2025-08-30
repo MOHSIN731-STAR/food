@@ -2,12 +2,12 @@ import { NextResponse } from "next/server";
 import { connectDB } from "../../../lib/db";
 import Product from "../../../models/Proudct";
 import cloudinary from "cloudinary";
+import type { RequestContext } from "next/server";
 
 export const config = {
   api: { bodyParser: false },
 };
 
-// Cloudinary config
 cloudinary.v2.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
   api_key: process.env.CLOUDINARY_API_KEY!,
@@ -15,13 +15,10 @@ cloudinary.v2.config({
 });
 
 // ✅ PUT - update product
-export async function PUT(
-  req: Request,
-  { params }: { params: { id: string } } // <-- Fix type here
-) {
+export async function PUT(req: Request, context: RequestContext) {
   await connectDB();
 
-  const id = params.id;
+  const id = context.params.id as string;
 
   const formData = await req.formData();
   const name = formData.get("name") as string;
@@ -68,14 +65,11 @@ export async function PUT(
 }
 
 // ✅ DELETE - remove product
-export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } } // <-- Same fix
-) {
+export async function DELETE(req: Request, context: RequestContext) {
   try {
     await connectDB();
 
-    const id = params.id;
+    const id = context.params.id as string;
 
     const deletedProduct = await Product.findByIdAndDelete(id);
 
