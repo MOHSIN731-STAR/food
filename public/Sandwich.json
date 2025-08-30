@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "title": "Chicken Sandwich",
+    "description": "Food provides essential nutrients for overall health and well-being",
+    "price": 300,
+    "image": "/food_16.png"
+  },
+  {
+    "id": 2,
+    "title": "Vegan Sandwich",
+    "description": "Food provides essential nutrients ",
+    "price": 420,
+    "image": "/food_15.png"
+  },
+  {
+    "id": 3,
+    "title": "Grilled Sandwich",
+    "description": "Spicy zinger strip with tangy sauce.",
+    "price": 200,
+    "image": "/food_14.png"
+  },
+  {
+    "id": 4,
+    "title": "Bread Sandwich",
+    "description": "Food provides essential nutrients for overall health and well-being.",
+    "price": 480,
+    "image": "/food_13.png"
+  }
+]

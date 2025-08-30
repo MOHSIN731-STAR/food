@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "title": "Fruit Ice Cream",
+    "description": "Food provides essential nutrients for overall health and well-being",
+    "price": 350,
+    "image": "/food_9.png"
+  },
+  {
+    "id": 2,
+    "title": "Ripple Ice Cream",
+    "description": "Food provides essential nutrients ",
+    "price": 420,
+    "image": "/food_10.png"
+  },
+  {
+    "id": 3,
+    "title": "Zinger Roll",
+    "description": "Spicy zinger strip with tangy sauce.",
+    "price": 280,
+    "image": "/food_11.png"
+  },
+  {
+    "id": 4,
+    "title": "Jar Ice Cream",
+    "description": "Food provides essential nutrients for overall health and well-being.",
+    "price": 480,
+    "image": "/food_12.png"
+  }
+]

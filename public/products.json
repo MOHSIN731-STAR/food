@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "title": "Fresh Salad",
+    "description": "Food provides essential nutrients for overall health and well-being.",
+    "price": 10,
+    "image": "/food_1.png"
+  },
+  {
+    "id": 2,
+    "title": "Veg salad",
+    "description": "Food provides essential nutrients for overall health and well-being.",
+    "price": 150,
+    "image": "/food_2.png"
+  },
+  {
+    "id": 3,
+    "title": "Clover Salad",
+    "description": "Food provides essential nutrients for overall health and well-being.",
+    "price": 20,
+    "image": "/food_3.png"
+  },
+  {
+    "id": 4,
+    "title": "Chicken Salad",
+    "description": "Food provides essential nutrients for overall health and well-being.",
+    "price": 8,
+    "image": "/food_4.png"
+  }
+]

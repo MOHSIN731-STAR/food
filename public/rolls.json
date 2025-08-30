@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "title": "Chicken Roll",
+    "description": "Crispy chicken, garlic mayo, fresh veggies.",
+    "price": 350,
+    "image": "/food_5.png"
+  },
+  {
+    "id": 2,
+    "title": "Zinger Roll",
+    "description": "Spicy zinger strip with tangy sauce.",
+    "price": 420,
+    "image": "/food_6.png"
+  },
+  {
+    "id": 3,
+    "title": "Veggie Roll",
+    "description": "Cabbage, carrot, capsicum & house mayo.",
+    "price": 280,
+    "image": "/food_7.png"
+  },
+  {
+    "id": 4,
+    "title": "Cheese Chicken Roll",
+    "description": "Juicy chicken with melted cheese.",
+    "price": 480,
+    "image": "/food_8.png"
+  }
+]
