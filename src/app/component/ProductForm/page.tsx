@@ -4,7 +4,14 @@ import axios from "axios";
 import Image from "next/image";
 
 interface ProductFormProps {
-  editingProduct?: unknown;
+  editingProduct?: {
+    _id?: string;
+    name?: string;
+    price?: string | number;
+    description?: string;
+    category?: string;
+    image?: string;
+  };
   onSuccess: () => void;
 }
 
@@ -19,8 +26,8 @@ export default function ProductForm({ editingProduct, onSuccess }: ProductFormPr
     image: editingProduct?.image || "",
   });
 
-  const [uploading] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false); // ✅ state for popup
+  const [uploading, setUploading] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -34,20 +41,19 @@ export default function ProductForm({ editingProduct, onSuccess }: ProductFormPr
     setForm({ ...form, image: file });
   };
 
-  // ✅ Main Submit
   const handleSubmit = async () => {
     try {
+      setUploading(true);
       const formData = new FormData();
       formData.append("name", form.name);
-      formData.append("price", form.price);
+      formData.append("price", form.price.toString());
       formData.append("description", form.description);
       formData.append("category", form.category);
       if (form.image instanceof File) {
         formData.append("image", form.image);
       }
 
-      if (editingProduct) {
-        formData.append("id", editingProduct._id);
+      if (editingProduct?._id) {
         await axios.put(`http://localhost:3000/api/products/${editingProduct._id}`, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
@@ -59,13 +65,13 @@ export default function ProductForm({ editingProduct, onSuccess }: ProductFormPr
 
       onSuccess();
       setForm({ name: "", price: "", description: "", category: "", image: "" });
-      setShowConfirm(false); // close popup
-    } catch (err: unknown) {
-      if (err instanceof Error) {
+      setShowConfirm(false);
+    } catch (err: any) {
       console.error("Product save error:", err.response?.data || err.message);
       alert(err.response?.data?.message || "Something went wrong!");
+    } finally {
+      setUploading(false);
     }
-  }
   };
 
   return (
@@ -74,9 +80,9 @@ export default function ProductForm({ editingProduct, onSuccess }: ProductFormPr
         onSubmit={(e) => {
           e.preventDefault();
           if (editingProduct) {
-            setShowConfirm(true); // ✅ open popup for update
+            setShowConfirm(true);
           } else {
-            handleSubmit(); // directly add
+            handleSubmit();
           }
         }}
         className="p-4 bg-gray-100 rounded mb-4"
@@ -130,7 +136,7 @@ export default function ProductForm({ editingProduct, onSuccess }: ProductFormPr
         <input type="file" onChange={handleImage} className="mb-2" />
 
         {form.image &&
-          (typeof form.image === "string" && form.image !== "" ? (
+          (typeof form.image === "string" ? (
             <Image
               src={form.image}
               alt="preview"
@@ -138,7 +144,7 @@ export default function ProductForm({ editingProduct, onSuccess }: ProductFormPr
               width={200}
               height={200}
             />
-          ) : form.image instanceof File ? (
+          ) : (
             <Image
               src={URL.createObjectURL(form.image)}
               alt="preview"
@@ -146,7 +152,7 @@ export default function ProductForm({ editingProduct, onSuccess }: ProductFormPr
               width={200}
               height={200}
             />
-          ) : null)}
+          ))}
 
         <button
           type="submit"
@@ -157,7 +163,6 @@ export default function ProductForm({ editingProduct, onSuccess }: ProductFormPr
         </button>
       </form>
 
-      {/* ✅ Confirmation Popup */}
       {showConfirm && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded shadow-md text-center">
