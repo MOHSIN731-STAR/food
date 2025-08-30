@@ -66,12 +66,14 @@ export default function ProductForm({ editingProduct, onSuccess }: ProductFormPr
       onSuccess();
       setForm({ name: "", price: "", description: "", category: "", image: "" });
       setShowConfirm(false);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      if (err instanceof Error) {
       console.error("Product save error:", err.response?.data || err.message);
       alert(err.response?.data?.message || "Something went wrong!");
-    } finally {
+    }  }finally {
       setUploading(false);
     }
+   
   };
 
   return (
