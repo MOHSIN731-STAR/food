@@ -37,7 +37,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     const bytes = await image.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const upload = await new Promise<any>((resolve, reject) => {
+    const upload = await new Promise<unknown>((resolve, reject) => {
       cloudinary.v2.uploader
         .upload_stream({}, (err, result) => {
           if (err) reject(err);
@@ -89,10 +89,12 @@ export async function DELETE(
       { message: "Product deleted successfully" },
       { status: 200 }
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
+    if (error instanceof Error) {
     return NextResponse.json(
       { error: error.message },
       { status: 500 }
     );
   }
+}
 }

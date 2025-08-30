@@ -15,7 +15,7 @@ interface Product {
 export default function ProductList() {
   const [products, setProducts] = useState<Product[]>([]);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [form, setForm] = useState<any>({
+  const [form, setForm] = useState<unknown>({
     name: "",
     price: "",
     description: "",
@@ -32,9 +32,11 @@ export default function ProductList() {
     try {
       await axios.delete(`http://localhost:3000/api/products/${id}`);
       fetchProducts();
-    } catch (error: any) {
+    } catch (error: unknown) {
+      if (error instanceof Error) {
       console.error("Delete error:", error.response?.data || error.message);
     }
+  }
   };
 
   const handleEdit = (p: Product) => {
@@ -72,9 +74,11 @@ const handleUpdate = async () => {
 
     setEditingProduct(null);
     fetchProducts();
-  } catch (error: any) {
+  } catch (error: unknown) {
+    if (error instanceof Error) {
     console.error("Update error:", error.response?.data || error.message);
   }
+}
 };
 
   useEffect(() => {

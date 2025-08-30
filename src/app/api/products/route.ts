@@ -37,7 +37,7 @@ export async function POST(req: Request) {
     const bytes = await image.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const upload = await new Promise<any>((resolve, reject) => {
+    const upload = await new Promise<unknown>((resolve, reject) => {
       cloudinary.v2.uploader
         .upload_stream({}, (err, result) => {
           if (err) reject(err);
