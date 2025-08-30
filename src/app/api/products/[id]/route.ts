@@ -18,11 +18,13 @@ cloudinary.v2.config({
 // ✅ PUT - update product
 export async function PATCH(
   req: Request,
-  context: { params: { id: string } } // ✅ correct type
+  context: { params: Record<string, string | string[]> }
 ) {
   await connectDB();
 
-  const { id } = context.params; // get id from context
+  const id = Array.isArray(context.params.id)
+    ? context.params.id[0]
+    : context.params.id;
 
   const formData = await req.formData();
   const name = formData.get("name") as string;
@@ -31,21 +33,17 @@ export async function PATCH(
   const category = formData.get("category") as string;
   const image = formData.get("image") as File | null;
 
-  if (!id) {
-    return NextResponse.json({ error: "Product ID is required" }, { status: 400 });
-  }
-
-  let imageUrl: string | undefined = undefined;
+  let imageUrl: string | undefined;
 
   if (image) {
     const bytes = await image.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    const upload = await new Promise<unknown>((resolve, reject) => {
+    const upload = await new Promise<{ secure_url: string }>((resolve, reject) => {
       cloudinary.v2.uploader
         .upload_stream({}, (err, result) => {
           if (err) reject(err);
-          else resolve(result);
+          else resolve(result as { secure_url: string });
         })
         .end(buffer);
     });
@@ -71,6 +69,7 @@ export async function PATCH(
 
   return NextResponse.json(updatedProduct);
 }
+
 
 // ✅ DELETE - remove product
 export async function DELETE(req: Request, context: unknown) {
