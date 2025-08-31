@@ -17,7 +17,7 @@ interface ProductFormProps {
 
 const categories = ["Salad", "Rolls", "Deserts", "Sandwich", "Cake", "Pure Veg"];
 
-export default function ProductForm({ editingProduct, onSuccess }: ProductFormProps) {
+export default function ProductForm({ editingProduct }: ProductFormProps) {
   const [form, setForm] = useState({
     name: editingProduct?.name || "",
     price: editingProduct?.price || "",
