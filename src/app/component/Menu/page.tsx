@@ -13,6 +13,16 @@ import { fetchPure } from '../../redux/store/PureSlice';
 
 import { FiPlus } from "react-icons/fi";
 
+// Define a proper type for your products
+interface Product {
+  _id: string;
+  id?: string;
+  title: string;
+  price: number;
+  image: string;
+  description?: string;
+}
+
 const Menu: React.FC = () => {
   const [selectedMenu, setSelectedMenu] = useState<string | null>('Salad');
   const [hoveredProduct, setHoveredProduct] = useState<string | null>(null);
@@ -64,9 +74,9 @@ const Menu: React.FC = () => {
     setSelectedMenu(item.label);
   };
 
-  const handleAddToCart = (product: unknown) => {
+  const handleAddToCart = (product: Product) => {
     dispatch(addToCart({
-      id: product._id || product.id,
+      id: product._id,
       title: product.title,
       price: product.price,
       image: product.image
@@ -93,7 +103,7 @@ const Menu: React.FC = () => {
           <div key={index} className="flex flex-col items-center">
             <Image
               src={item.src}
-              alt='{item.label}'
+              alt={item.label}
               width={100}
               height={100}
               className="hover:scale-110 transition duration-300 hover:border-2 hover:border-[#ff4c24] rounded-full cursor-pointer"
@@ -115,20 +125,20 @@ const Menu: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-4">
           {items.map((product1, index) => (
             <div
-              key={product1._id || product1.id || index}
+              key={product1._id}
               className="relative bg-white rounded-lg shadow-md hover:shadow-[#f5beb5] flex flex-col hover:scale-105 transition-transform"
-              onMouseEnter={() => setHoveredProduct(product1._id || product1.id)}
+              onMouseEnter={() => setHoveredProduct(product1._id)}
               onMouseLeave={() => setHoveredProduct(null)}
             >
               <Image
                 src={product1.image}
-                alt='{product1.title}'
+                alt={product1.title}
                 width={700}
                 height={700}
                 className="rounded object-cover w-full"
               />
 
-              {hoveredProduct === (product1._id || product1.id) && (
+              {hoveredProduct === product1._id && (
                 <button
                   className="absolute top-2 right-2 bg-white text-black hover:text-white p-2 rounded-full shadow-lg hover:bg-[#e63d17] transition"
                   onClick={() => handleAddToCart(product1)}
@@ -152,20 +162,20 @@ const Menu: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-4">
           {rolls1.map((product1, index) => (
            <div
-              key={product1._id || product1.id || index}
+              key={product1._id}
               className="relative bg-white rounded-lg shadow-md hover:shadow-[#f5beb5] flex flex-col hover:scale-105 transition-transform"
-              onMouseEnter={() => setHoveredProduct(product1._id || product1.id)}
+              onMouseEnter={() => setHoveredProduct(product1._id)}
               onMouseLeave={() => setHoveredProduct(null)}
             >
               <Image
                 src={product1.image}
-                alt='{product1.title}'
+                alt={product1.title}
                 width={700}
                 height={700}
                 className="rounded object-cover w-full"
               />
 
-              {hoveredProduct === (product1._id || product1.id) && (
+              {hoveredProduct === product1._id && (
                 <button
                   className="absolute top-2 right-2 bg-white text-black hover:text-white p-2 rounded-full shadow-lg hover:bg-[#e63d17] transition"
                   onClick={() => handleAddToCart(product1)}
@@ -189,20 +199,20 @@ const Menu: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-4">
           {desert.map((rol, index) => (
             <div
-              key={rol._id || rol.id || index}
+              key={rol._id}
               className="relative bg-white rounded-lg shadow-md hover:shadow-[#f5beb5] flex flex-col hover:scale-105 transition-transform"
-              onMouseEnter={() => setHoveredProduct(rol._id || rol.id)}
+              onMouseEnter={() => setHoveredProduct(rol._id)}
               onMouseLeave={() => setHoveredProduct(null)}
             >
               <Image
                 src={rol.image}
-                alt='{rol.title}'
+                alt={rol.title}
                 width={700}
                 height={700}
                 className="rounded object-cover w-full"
               />
 
-              {hoveredProduct === (rol._id || rol.id) && (
+              {hoveredProduct === rol._id && (
                 <button
                   className="absolute top-2 right-2 bg-white text-black hover:text-white p-2 rounded-full shadow-lg hover:bg-[#e63d17] transition"
                   onClick={() => handleAddToCart(rol)}
@@ -226,20 +236,20 @@ const Menu: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-4">
           {sandWich.map((rol, index) => (
             <div
-              key={rol._id || rol.id || index}
+              key={rol._id}
               className="relative bg-white rounded-lg shadow-md hover:shadow-[#f5beb5] flex flex-col hover:scale-105 transition-transform"
-              onMouseEnter={() => setHoveredProduct(rol._id || rol.id)}
+              onMouseEnter={() => setHoveredProduct(rol._id)}
               onMouseLeave={() => setHoveredProduct(null)}
             >
               <Image
                 src={rol.image}
-                alt='{rol.title}'
+                alt={rol.title}
                 width={700}
                 height={700}
                 className="rounded object-cover w-full"
               />
 
-              {hoveredProduct === (rol._id || rol.id) && (
+              {hoveredProduct === rol._id && (
                 <button
                   className="absolute top-2 right-2 bg-white text-black hover:text-white p-2 rounded-full shadow-lg hover:bg-[#e63d17] transition"
                   onClick={() => handleAddToCart(rol)}
@@ -263,20 +273,20 @@ const Menu: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-4">
           {Cake.map((rol, index) => (
             <div
-              key={rol._id || rol.id || index}
+              key={rol._id}
               className="relative bg-white rounded-lg shadow-md hover:shadow-[#f5beb5] flex flex-col hover:scale-105 transition-transform"
-              onMouseEnter={() => setHoveredProduct(rol._id || rol.id)}
+              onMouseEnter={() => setHoveredProduct(rol._id)}
               onMouseLeave={() => setHoveredProduct(null)}
             >
               <Image
                 src={rol.image}
-                alt='{rol.title}'
+                alt={rol.title}
                 width={700}
                 height={700}
                 className="rounded object-cover w-full"
               />
 
-              {hoveredProduct === (rol._id || rol.id) && (
+              {hoveredProduct === rol._id && (
                 <button
                   className="absolute top-2 right-2 bg-white text-black hover:text-white p-2 rounded-full shadow-lg hover:bg-[#e63d17] transition"
                   onClick={() => handleAddToCart(rol)}
@@ -300,20 +310,20 @@ const Menu: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-4">
           {Pure.map((rol, index) => (
             <div
-              key={rol._id || rol.id || index}
+              key={rol._id}
               className="relative bg-white rounded-lg shadow-md hover:shadow-[#f5beb5] flex flex-col hover:scale-105 transition-transform"
-              onMouseEnter={() => setHoveredProduct(rol._id || rol.id)}
+              onMouseEnter={() => setHoveredProduct(rol._id)}
               onMouseLeave={() => setHoveredProduct(null)}
             >
               <Image
                 src={rol.image}
-                alt='{rol.title}'
+                alt={rol.title}
                 width={700}
                 height={700}
                 className="rounded object-cover w-full transition-transform duration-300"
               />
 
-              {hoveredProduct === (rol._id || rol.id) && (
+              {hoveredProduct === rol._id && (
                 <button
                   className="absolute top-2 right-2 bg-white text-black hover:text-white p-2 rounded-full shadow-lg hover:bg-[#e63d17] transition"
                   onClick={() => handleAddToCart(rol)}

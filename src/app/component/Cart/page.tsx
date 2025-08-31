@@ -18,6 +18,15 @@ const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY as string
 );
 
+// Define the CartItem type
+interface CartItem {
+  id: string;
+  title: string;
+  price: number;
+  quantity: number;
+  image?: string;
+}
+
 const Cart: React.FC = () => {
   const { items } = useSelector((state: RootState) => state.cart);
   const dispatch = useDispatch<AppDispatch>();
@@ -32,7 +41,7 @@ const Cart: React.FC = () => {
   });
 
   const totalPrice = items.reduce(
-    (total, item) => total + item.price * item.quantity,
+    (total: number, item: CartItem) => total + item.price * item.quantity,
     0
   );
 
@@ -48,38 +57,37 @@ const Cart: React.FC = () => {
     setMounted(true);
   }, [dispatch]);
 
- const handleCheckout = async () => {
-  const { name, email, phone, postcode, address } = formData;
-  if (!name || !email || !phone || !postcode || !address) {
-    alert("Please fill in all the fields.");
-    return;
-  }
+  const handleCheckout = async () => {
+    const { name, email, phone, postcode, address } = formData;
+    if (!name || !email || !phone || !postcode || !address) {
+      alert("Please fill in all the fields.");
+      return;
+    }
 
-  const stripe = await stripePromise;
-  if (!stripe) return;
+    const stripe = await stripePromise;
+    if (!stripe) return;
 
-  const res = await fetch("/api/create-payment-intent", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ items, customer: formData }),
-  });
+    const res = await fetch("/api/create-payment-intent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items, customer: formData }),
+    });
 
-  if (!res.ok) {
-    const err = await res.text();
-    alert("Payment failed: " + err);
-    return;
-  }
+    if (!res.ok) {
+      const err = await res.text();
+      alert("Payment failed: " + err);
+      return;
+    }
 
-  const session = await res.json();
+    const session = await res.json();
 
-  if (session.error) {
-    alert(session.error);
-    return;
-  }
+    if (session.error) {
+      alert(session.error);
+      return;
+    }
 
-  await stripe.redirectToCheckout({ sessionId: session.id });
-};
-
+    await stripe.redirectToCheckout({ sessionId: session.id });
+  };
 
   if (!mounted) return null;
 
@@ -107,7 +115,7 @@ const Cart: React.FC = () => {
               type={field === "email" ? "email" : "text"}
               name={field}
               placeholder={`Enter your ${field}`}
-              value={(formData as unknown as Record<string, string>)[field]}
+              value={formData[field as keyof typeof formData]}
               onChange={handleChange}
               className="w-full border p-2 rounded focus:border-blue-500 focus:ring-2 focus:ring-blue-300 outline-none transition"
             />
@@ -141,7 +149,7 @@ const Cart: React.FC = () => {
           </h1>
         </Link>
 
-        {items.map((item) => (
+        {items.map((item: CartItem) => (
           <div
             key={item.id}
             className="flex items-center justify-between border-b py-4"
@@ -149,7 +157,7 @@ const Cart: React.FC = () => {
             <div className="flex items-center gap-4">
               <Image
                 src={item.image || "/placeholder.png"}
-                alt='{item.title || "Product"}'
+                alt={item.title || "Product"}
                 width={80}
                 height={80}
                 className="rounded"

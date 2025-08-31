@@ -15,17 +15,10 @@ export interface ProductFormProps {
   onSuccess: () => void;
 }
 
-
 const categories = ['Salad', 'Rolls', 'Deserts', 'Sandwich', 'Cake', 'Pure Veg'];
 
-export default function ProductForm({ editingProduct, onSuccess }: ProductFormProps)  {
-  const [form, setForm] = useState<{
-    name: string;
-    price: string;
-    description: string;
-    category: string;
-    image: string | File;
-  }>({
+export default function ProductForm({ editingProduct, onSuccess }: ProductFormProps) {
+  const [form, setForm] = useState({
     name: editingProduct?.name || '',
     price: editingProduct?.price?.toString() || '',
     description: editingProduct?.description || '',
@@ -53,7 +46,7 @@ export default function ProductForm({ editingProduct, onSuccess }: ProductFormPr
       setUploading(true);
       const formData = new FormData();
       formData.append('name', form.name);
-      formData.append('price', form.price.toString());
+      formData.append('price', form.price);
       formData.append('description', form.description);
       formData.append('category', form.category);
       if (form.image instanceof File) {
@@ -61,7 +54,7 @@ export default function ProductForm({ editingProduct, onSuccess }: ProductFormPr
       }
 
       if (editingProduct?._id) {
-        await axios.PATCH(`/api/products/${editingProduct._id}`, formData, {
+        await axios.patch(`/api/products/${editingProduct._id}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
       } else {
@@ -74,13 +67,17 @@ export default function ProductForm({ editingProduct, onSuccess }: ProductFormPr
       setForm({ name: '', price: '', description: '', category: '', image: '' });
       setShowConfirm(false);
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        console.error('Product save error:', err.message);
-        alert(err.message);
- 
-      console.error('Product save error:', err.message || err);
-      alert(err.response?.data?.message || 'Something went wrong!');
-           }
+      console.error('Product save error:', err);
+      
+      // Safe error message extraction
+      let errorMessage = 'Something went wrong!';
+      if (axios.isAxiosError(err) && err.response?.data?.error) {
+        errorMessage = err.response.data.error;
+      } else if (err instanceof Error) {
+        errorMessage = err.message;
+      }
+      
+      alert(errorMessage);
     } finally {
       setUploading(false);
     }
@@ -147,31 +144,30 @@ export default function ProductForm({ editingProduct, onSuccess }: ProductFormPr
 
         <input type="file" onChange={handleImage} className="mb-2" />
 
-        {form.image &&
-          (typeof form.image === 'string' ? (
-            <Image
-              src={form.image}
-              alt="preview"
-              className="w-20 h-20 mb-2 object-cover"
-              width={200}
-              height={200}
-            />
-          ) : (
-            <Image
-              src={URL.createObjectURL(form.image)}
-              alt="preview"
-              className="w-20 h-20 mb-2 object-cover"
-              width={200}
-              height={200}
-            />
-          ))}
+        {form.image && typeof form.image === 'string' ? (
+          <Image
+            src={form.image}
+            alt="preview"
+            className="w-20 h-20 mb-2 object-cover"
+            width={80}
+            height={80}
+          />
+        ) : form.image instanceof File ? (
+          <Image
+            src={URL.createObjectURL(form.image)}
+            alt="preview"
+            className="w-20 h-20 mb-2 object-cover"
+            width={80}
+            height={80}
+          />
+        ) : null}
 
         <button
           type="submit"
           className="bg-green-500 text-white px-4 py-2 rounded disabled:opacity-50"
           disabled={uploading}
         >
-          {editingProduct ? 'Update' : 'Add'}
+          {uploading ? 'Saving...' : editingProduct ? 'Update' : 'Add'}
         </button>
       </form>
 
@@ -183,9 +179,10 @@ export default function ProductForm({ editingProduct, onSuccess }: ProductFormPr
             <div className="flex justify-center gap-4">
               <button
                 onClick={handleSubmit}
-                className="bg-blue-500 text-white px-4 py-2 rounded"
+                className="bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
+                disabled={uploading}
               >
-                Yes, Update
+                {uploading ? 'Updating...' : 'Yes, Update'}
               </button>
               <button
                 onClick={() => setShowConfirm(false)}
