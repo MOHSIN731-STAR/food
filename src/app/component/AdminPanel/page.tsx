@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from "react";
-import ProductForm from "./../ProductForm/page";
+import ProductForm from "../ProductForm/ProductForm";
 import ProductList from "./../ProductList/page";
 
 export default function AdminPanel() {

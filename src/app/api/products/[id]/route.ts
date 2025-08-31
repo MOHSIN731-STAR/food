@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { connectDB } from "../../../lib/db";
 import Product from "../../../models/Proudct";
 import cloudinary from "cloudinary";
-import type { RequestContext } from "next/server";
+// import type { RequestContext } from "next/server";
 
 export const config = {
   api: { bodyParser: false },
@@ -15,10 +15,13 @@ cloudinary.v2.config({
 });
 
 // ✅ PUT - update product
-export async function PUT(req: Request, context: RequestContext) {
+export async function PATCH(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
   await connectDB();
 
-  const id = context.params.id as string;
+  const id = params.id;
 
   const formData = await req.formData();
   const name = formData.get("name") as string;
@@ -64,12 +67,17 @@ export async function PUT(req: Request, context: RequestContext) {
   return NextResponse.json(updatedProduct);
 }
 
+
 // ✅ DELETE - remove product
-export async function DELETE(req: Request, context: RequestContext) {
+
+
+export async function DELETE(
+  req: Request,
+  context: { params: { id: string } }
+) {
   try {
     await connectDB();
-
-    const id = context.params.id as string;
+    const { id } = context.params;
 
     const deletedProduct = await Product.findByIdAndDelete(id);
 
@@ -77,11 +85,11 @@ export async function DELETE(req: Request, context: RequestContext) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ message: "Product deleted successfully" }, { status: 200 });
+    return NextResponse.json({ message: "Product deleted successfully" });
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-    return NextResponse.json({ error: "Unknown error" }, { status: 500 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Unknown error" },
+      { status: 500 }
+    );
   }
 }

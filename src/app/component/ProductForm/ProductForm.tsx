@@ -1,13 +1,13 @@
 'use client';
-import React, { useState } from "react";
-import axios from "axios";
-import Image from "next/image";
+import React, { useState } from 'react';
+import axios from 'axios';
+import Image from 'next/image';
 
-interface ProductFormProps {
+export interface ProductFormProps {
   editingProduct?: {
     _id?: string;
     name?: string;
-    price?: string | number;
+    price?: number;
     description?: string;
     category?: string;
     image?: string;
@@ -15,15 +15,22 @@ interface ProductFormProps {
   onSuccess: () => void;
 }
 
-const categories = ["Salad", "Rolls", "Deserts", "Sandwich", "Cake", "Pure Veg"];
 
-export default function ProductForm({ editingProduct }: ProductFormProps) {
-  const [form, setForm] = useState({
-    name: editingProduct?.name || "",
-    price: editingProduct?.price || "",
-    description: editingProduct?.description || "",
-    category: editingProduct?.category || "",
-    image: editingProduct?.image || "",
+const categories = ['Salad', 'Rolls', 'Deserts', 'Sandwich', 'Cake', 'Pure Veg'];
+
+export default function ProductForm({ editingProduct, onSuccess }: ProductFormProps)  {
+  const [form, setForm] = useState<{
+    name: string;
+    price: string;
+    description: string;
+    category: string;
+    image: string | File;
+  }>({
+    name: editingProduct?.name || '',
+    price: editingProduct?.price?.toString() || '',
+    description: editingProduct?.description || '',
+    category: editingProduct?.category || '',
+    image: editingProduct?.image || '',
   });
 
   const [uploading, setUploading] = useState(false);
@@ -45,35 +52,38 @@ export default function ProductForm({ editingProduct }: ProductFormProps) {
     try {
       setUploading(true);
       const formData = new FormData();
-      formData.append("name", form.name);
-      formData.append("price", form.price.toString());
-      formData.append("description", form.description);
-      formData.append("category", form.category);
+      formData.append('name', form.name);
+      formData.append('price', form.price.toString());
+      formData.append('description', form.description);
+      formData.append('category', form.category);
       if (form.image instanceof File) {
-        formData.append("image", form.image);
+        formData.append('image', form.image);
       }
 
       if (editingProduct?._id) {
-        await axios.put(`http://localhost:3000/api/products/${editingProduct._id}`, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
+        await axios.PATCH(`/api/products/${editingProduct._id}`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
         });
       } else {
-        await axios.post("http://localhost:3000/api/products", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
+        await axios.post('/api/products', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
         });
       }
 
       onSuccess();
-      setForm({ name: "", price: "", description: "", category: "", image: "" });
+      setForm({ name: '', price: '', description: '', category: '', image: '' });
       setShowConfirm(false);
     } catch (err: unknown) {
       if (err instanceof Error) {
-      console.error("Product save error:", err.response?.data || err.message);
-      alert(err.response?.data?.message || "Something went wrong!");
-    }  }finally {
+        console.error('Product save error:', err.message);
+        alert(err.message);
+ 
+      console.error('Product save error:', err.message || err);
+      alert(err.response?.data?.message || 'Something went wrong!');
+           }
+    } finally {
       setUploading(false);
     }
-   
   };
 
   return (
@@ -90,7 +100,7 @@ export default function ProductForm({ editingProduct }: ProductFormProps) {
         className="p-4 bg-gray-100 rounded mb-4"
       >
         <h2 className="text-xl font-bold mb-3">
-          {editingProduct ? "Update Product" : "Add Product"}
+          {editingProduct ? 'Update Product' : 'Add Product'}
         </h2>
 
         <input
@@ -138,7 +148,7 @@ export default function ProductForm({ editingProduct }: ProductFormProps) {
         <input type="file" onChange={handleImage} className="mb-2" />
 
         {form.image &&
-          (typeof form.image === "string" ? (
+          (typeof form.image === 'string' ? (
             <Image
               src={form.image}
               alt="preview"
@@ -161,7 +171,7 @@ export default function ProductForm({ editingProduct }: ProductFormProps) {
           className="bg-green-500 text-white px-4 py-2 rounded disabled:opacity-50"
           disabled={uploading}
         >
-          {editingProduct ? "Update" : "Add"}
+          {editingProduct ? 'Update' : 'Add'}
         </button>
       </form>
 
